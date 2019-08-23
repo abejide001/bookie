@@ -3,40 +3,27 @@ package main
 
 import (
 	"bookie/models"
-	"database/sql"
+	"bookie/driver"
 	"encoding/json"
 	"fmt"
 	"log"
+	"database/sql"
 	"net/http"
-	"os"
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"github.com/lib/pq"
 	"github.com/subosito/gotenv"
 )
 
 var books []models.Book
 var db *sql.DB
-
 func init() {
 	gotenv.Load() // loads env variables
 }
 
 func main() {
-	pgURL, err := pq.ParseURL(os.Getenv("ELEPHANT_SQL_URL"))
-	if err != nil {
-		log.Fatal(err)
-	}
-	db, err = sql.Open("postgres", pgURL)
-	if err != nil {
-		fmt.Println("db is not connected")
-	}
-	defer db.Close()
-	dberr := db.Ping()
-	if dberr != nil {
-		fmt.Println(dberr)
-	}
+	db = driver.ConnectDB()
+
 	req := mux.NewRouter()
 	req.HandleFunc("/books", getBooks).Methods("GET")
 	req.HandleFunc("/books/{id}", getBook).Methods("GET")
