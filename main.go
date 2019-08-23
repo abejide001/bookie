@@ -2,27 +2,21 @@
 package main
 
 import (
+	"bookie/models"
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
-	"github.com/lib/pq"
-	"github.com/subosito/gotenv"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
+
+	"github.com/gorilla/mux"
+	"github.com/lib/pq"
+	"github.com/subosito/gotenv"
 )
 
-// Book type
-type Book struct {
-	ID     int    `json:id`
-	Title  string `json:title`
-	Author string `json:author`
-	Year   int    `json:year`
-}
-
-var books []Book
+var books []models.Book
 var db *sql.DB
 
 func init() {
@@ -57,9 +51,9 @@ func main() {
 }
 
 func getBooks(res http.ResponseWriter, req *http.Request) {
-	var book Book
+	var book models.Book
 	fmt.Println(book)
-	books = []Book{}
+	books = []models.Book{}
 	rows, err := db.Query("select * from bookstore")
 	if err != nil {
 		log.Fatal("db error", err)
@@ -78,7 +72,7 @@ func getBooks(res http.ResponseWriter, req *http.Request) {
 }
 
 func getBook(res http.ResponseWriter, req *http.Request) {
-	var book Book
+	var book models.Book
 
 	params := mux.Vars(req)
 	id, _ := strconv.Atoi(params["id"])
@@ -100,7 +94,7 @@ func getBook(res http.ResponseWriter, req *http.Request) {
 }
 
 func addBook(res http.ResponseWriter, req *http.Request) {
-	var book Book
+	var book models.Book
 	var bookID int
 	json.NewDecoder(req.Body).Decode(&book) // decode maps the value in the body to the book var
 	if len(book.Title) <= 0 {
@@ -123,7 +117,7 @@ func addBook(res http.ResponseWriter, req *http.Request) {
 }
 
 func updateBook(res http.ResponseWriter, req *http.Request) {
-	var book Book
+	var book models.Book
 	json.NewDecoder(req.Body).Decode(&book)
 	params := mux.Vars(req)
 	id, _ := strconv.Atoi(params["id"])
