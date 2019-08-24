@@ -3,8 +3,8 @@ package driver
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"github.com/lib/pq"
+	"log"
 	"os"
 )
 
