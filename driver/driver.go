@@ -12,11 +12,11 @@ var db *sql.DB
 
 // ConnectDB function
 func ConnectDB() *sql.DB {
-	pgURL, err := pq.ParseURL(os.Getenv("ELEPHANT_SQL_URL"))
-	if err != nil {
-		log.Fatal(err)
+	pgURL, pgerr := pq.ParseURL(os.Getenv("ELEPHANT_SQL_URL"))
+	if pgerr != nil {
+		log.Fatal(pgerr)
 	}
-	db, err = sql.Open("postgres", pgURL)
+	db, err := sql.Open("postgres", pgURL)
 	if err != nil {
 		fmt.Println("db is not connected")
 	}
